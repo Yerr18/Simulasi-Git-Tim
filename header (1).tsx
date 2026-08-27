@@ -1,6 +1,6 @@
 dirimport { useState } from "react";
 
-const TEAM_NAME = "MLBB";
+const TEAM_NAME = "ML Store";
 
 const NAV_LINKS = [
   { label: "Dashboard", href: "#dashboard" },
