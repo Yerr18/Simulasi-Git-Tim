@@ -1,0 +1,115 @@
+import { useState } from "react";
+
+interface Task {
+  id: number;
+  title: string;
+  completed: boolean;
+}
+
+export default function TaskList() {
+  const [tasks, setTasks] = useState<Task[]>([
+    { id: 1, title: "Design Landing Page UI", completed: false },
+    { id: 2, title: "Setup Project Repository", completed: true },
+    { id: 3, title: "Fix Header Responsiveness", completed: false },
+  ]);
+  const [newTaskTitle, setNewTaskTitle] = useState("");
+
+  // Tambah Task Baru
+  const handleAddTask = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTaskTitle.trim()) return;
+
+    const newTask: Task = {
+      id: Date.now(),
+      title: newTaskTitle,
+      completed: false,
+    };
+
+    setTasks([...tasks, newTask]);
+    setNewTaskTitle("");
+  };
+
+  // Toggle Status Selesai / Belum
+  const toggleTask = (id: number) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === id ? { ...task, completed: !task.completed } : task
+      )
+    );
+  };
+
+  // Hapus Task
+  const deleteTask = (id: number) => {
+    setTasks(tasks.filter((task) => task.id !== id));
+  };
+
+  return (
+    <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          Team Task List
+        </h1>
+        <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
+          {tasks.filter((t) => t.completed).length} / {tasks.length} Completed
+        </span>
+      </div>
+
+      {/* Form Input Task */}
+      <form onSubmit={handleAddTask} className="mb-6 flex gap-2">
+        <input
+          type="text"
+          value={newTaskTitle}
+          onChange={(e) => setNewTaskTitle(e.target.value)}
+          placeholder="Add a new task..."
+          className="w-full rounded-md border border-slate-300 px-4 py-2 text-sm outline-none transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+        />
+        <button
+          type="submit"
+          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+        >
+          Add
+        </button>
+      </form>
+
+      {/* List Task */}
+      <div className="space-y-2">
+        {tasks.length === 0 ? (
+          <p className="py-6 text-center text-sm text-slate-500">
+            No tasks found. Create one above!
+          </p>
+        ) : (
+          tasks.map((task) => (
+            <div
+              key={task.id}
+              className="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-4 shadow-sm"
+            >
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={task.completed}
+                  onChange={() => toggleTask(task.id)}
+                  className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span
+                  className={`text-sm font-medium ${
+                    task.completed
+                      ? "text-slate-400 line-through"
+                      : "text-slate-800"
+                  }`}
+                >
+                  {task.title}
+                </span>
+              </div>
+              <button
+                onClick={() => deleteTask(task.id)}
+                className="text-xs font-medium text-red-500 hover:text-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          ))
+        )}
+      </div>
+    </main>
+  );
+}
